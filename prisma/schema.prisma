@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+// npx prisma generate
+// npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  
+  url      = "postgres://postgres:admin1@localhost:5432/laTienda2" //env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  name String 
+  password String?
+  email String @unique
+  profilePicture String?
+  googleId String? @unique
+  discordId String? @unique
+  createdAt DateTime @default(now())
+}
+
+model Cart {
+  unique String @id @default(uuid())
+  id String 
+  buyerId String
+  name String
+  cost Float
+  qty Int
+  image String
+  price String
+}
