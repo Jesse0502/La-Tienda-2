@@ -48,11 +48,11 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(handleSignup.fulfilled, (state, action) => {
-      const user: any = jwt.decode(action.payload.data.token);
+      const user: any = jwt.decode(action.payload?.data?.token);
       state.user = user;
     });
     builder.addCase(handleLogin.fulfilled, (state, action) => {
-      const user: any = jwt.decode(action.payload.data.token);
+      const user: any = jwt.decode(action.payload?.data?.token);
       state.user = user;
     });
   },

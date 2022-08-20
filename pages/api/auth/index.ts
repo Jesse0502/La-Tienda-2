@@ -31,8 +31,6 @@ export async function getChatUsers(user: UserInterface) {
 export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     try {
-      await db.user.deleteMany();
-
       const { name, email, password } = req.body.data;
       if (!name) return res.status(400).json({ error: "Missing Field 'Name'" });
       if (!email || !password)

@@ -7,7 +7,6 @@ import { UserInterface } from "../../../store/authSlice";
 export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     try {
-      console.log(req.cookies);
       const user: any = jwt.decode(req.cookies.token);
       if (!user) return res.redirect(503, "/");
       const session = await stripe.checkout.sessions.create({

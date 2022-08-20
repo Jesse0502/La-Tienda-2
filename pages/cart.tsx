@@ -169,7 +169,6 @@ export async function getServerSideProps({ req, res }: any) {
   if (!token) return { redirect: { destination: "/signup" } };
   const user = jwt.decode(token) as UserInterface;
   const cartItems = await getCartItems(user.id);
-  console.log(cartItems);
   return {
     props: {
       user,

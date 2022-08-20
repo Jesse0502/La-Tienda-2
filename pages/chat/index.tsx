@@ -18,7 +18,7 @@ import { AppState } from "../../store/store";
 import jwt from "jsonwebtoken";
 import { getChatUsers } from "../api/auth";
 import { useRouter } from "next/router";
-import { setChats, setWebSocket } from "../../store/chatSlice";
+import { setChats } from "../../store/chatSlice";
 
 const Chat = (props: any) => {
   // @ts-ignore
@@ -27,11 +27,13 @@ const Chat = (props: any) => {
   const socket = useSelector((app: AppState) => app.chat.websocket);
 
   useEffect(() => {
-    dispatch(setWebSocket(socket));
+    const run = async () => {
+      if (user?.id) {
+        await socket.emit("join", { id: user?.id });
+      }
+    };
     dispatch(setChats(props.users));
-    if (user?.id) {
-      socket.emit("join", { id: user?.id });
-    }
+    run();
   }, []);
 
   const router = useRouter();

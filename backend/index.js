@@ -21,7 +21,6 @@ const io = new Server(server, {
 });
 
 app.get("/", async (req, res) => {
-  console.log(req.params);
   res.status(200).send("Hello world");
 });
 
@@ -36,6 +35,7 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     let sendTo = onlineUsers[data.to];
+    // socket.join(`${data.to}-${sendTo}`);
     if (sendTo) {
       socket.to(sendTo).emit("receive_message", {
         msg: data.msg,

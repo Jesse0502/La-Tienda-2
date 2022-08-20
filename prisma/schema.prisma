@@ -36,3 +36,12 @@ model Cart {
   image String
   price String
 }
+
+model Chat {
+  id Int @unique @default(autoincrement())
+  msg String
+  slug String
+  time DateTime
+  senderId String
+  recieverId String
+}

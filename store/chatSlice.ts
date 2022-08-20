@@ -5,12 +5,14 @@ import io from "socket.io-client";
 export interface InitialState {
   websocket: any;
   chats: any;
+  lastMsg: any;
 }
 // @ts-ignore
 const socket = io.connect("http://localhost:5000");
 const initialState: InitialState = {
   websocket: socket,
   chats: {},
+  lastMsg: {},
 };
 
 export const chatSlice = createSlice({
@@ -21,13 +23,16 @@ export const chatSlice = createSlice({
       action.payload = state.websocket;
     },
     setChats: (state, action) => {
-      action.payload.forEach((user: any) => {
-        state.chats[user.id] = { ...user, chat: [] };
-      });
-      console.log(current(state.chats));
+      if (Object.keys(state.chats).length !== action.payload.length) {
+        action.payload.forEach((user: any) => {
+          state.chats[user.id] = { ...user, chat: [] };
+        });
+      }
+    },
+    setChatHistory: (state, action) => {
+      state.chats[action.payload.id].chat = action.payload.chat;
     },
     sendMsg: (state, action) => {
-      console.log("sending msg....");
       let chatter = state.chats[action.payload.to];
       if (chatter) {
         state.chats[chatter.id] = {
@@ -35,34 +40,34 @@ export const chatSlice = createSlice({
           chat: [
             ...chatter.chat,
             {
-              from: action.payload.from,
+              senderId: action.payload.from,
+              recieverId: action.payload.to,
               msg: action.payload.msg,
               time: action.payload.time,
             },
           ],
         };
-        console.log(current(state.chats));
       }
     },
     recieveMsg: (state, action) => {
-      console.log("recieving msg....");
       let chatter = state.chats[action.payload.from];
-      if (chatter) {
+      if (chatter && state.lastMsg !== JSON.stringify({ ...action.payload })) {
         state.chats[chatter.id] = {
           ...chatter,
           chat: Array.from(
             new Set([
               ...chatter.chat,
               {
-                from: action.payload.from,
+                senderId: action.payload.from,
+                recieverId: action.payload.to,
                 msg: action.payload.msg,
                 time: action.payload.time,
               },
             ])
           ),
         };
-        console.log(current(state.chats));
       }
+      state.lastMsg = JSON.stringify({ ...action.payload });
     },
   },
   extraReducers: (builder) => {
@@ -71,7 +76,7 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { setWebSocket, setChats, sendMsg, recieveMsg } =
+export const { setWebSocket, setChats, sendMsg, recieveMsg, setChatHistory } =
   chatSlice.actions;
 
 export default chatSlice.reducer;
